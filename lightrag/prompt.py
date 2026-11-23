@@ -21,17 +21,13 @@ PROMPTS[
     "default_entity_types_guidance"
 ] = """Classify each entity using one of the following types. If no type fits, use `Other`.
 
-- Person: Human individuals, real or fictional
-- Creature: Non-human living beings (animals, mythical beings, etc.)
-- Organization: Companies, institutions, government bodies, groups
-- Location: Geographic places (cities, countries, buildings, regions)
-- Event: Occurrences, incidents, ceremonies, meetings
-- Concept: Abstract ideas, theories, principles, beliefs
-- Method: Procedures, techniques, algorithms, workflows
-- Content: Creative or informational works (books, articles, films, reports)
-- Data: Quantitative or structured information (statistics, datasets, measurements)
-- Artifact: Physical or digital objects created by humans (tools, software, devices)
-- NaturalObject: Natural non-living objects (minerals, celestial bodies, chemical compounds)"""
+- Disease: 疾病名称（如 高血压、糖尿病、肺炎）
+- Drug: 药物名称（如 硝苯地平、胰岛素、阿司匹林）
+- Symptom: 症状（如 头痛、发热、咳嗽、恶心）
+- BodyPart: 身体部位（如 心脏、肝脏、肺部）
+- Exam: 医学检查项目（如 血常规、CT、B超、血压测量）
+- Food: 食物（如 高盐食物、维生素C、燕麦）
+- Department: 科室（如 心血管内科、呼吸内科）"""
 
 # Wrapper block for the optional per-chunk section breadcrumb. The
 # `---Section Context---` heading lives ONLY here so the extraction code never
@@ -57,6 +53,15 @@ PROMPTS["entity_extraction_system_prompt"] = """---Role---
 You are a Knowledge Graph Specialist responsible for extracting entities and relationships from the `---Input Text---` section of user prompt.
 
 ---Instructions---
+0. **CRITICAL RULES — MUST OBEY (anti-hallucination):**
+   - For treats (treatment) relationships, prefer drugs mentioned in the 【医生建议】(doctor's advice) section rather than the 【患者自述】(patient's own words) section.
+   - Extract ONLY entities and relationships that are EXPLICITLY written in the `---Input Text---`.
+   - BOTH endpoints of a relationship MUST appear verbatim in the input text. If either entity name does not literally appear in the text, DO NOT output that relationship.
+   - DO NOT use medical common sense, prior knowledge, or reasonable inference to invent facts not written in the text.
+   - If a drug name does not appear in the text, DO NOT output any Drug entity for it.
+   - NEVER output relationship type names (treats, has_symptom, causes, complication, exam, contraindicates) as entity names.
+   - Entity names MUST be written in the same language as the input text (Chinese). Do NOT translate Chinese entities into English. Do NOT apply English title case to Chinese text.
+
 1. **Entity Extraction:**
   - Identify clearly defined and meaningful entities only in the current user prompt's fenced `---Input Text---` section.
   - For each entity, extract:
@@ -66,6 +71,8 @@ You are a Knowledge Graph Specialist responsible for extracting entities and rel
 
 2. **Relationship Extraction:**
   - Identify direct, clearly stated, and meaningful relationships between previously extracted entities.
+  - Use exactly one relationship keyword from this controlled vocabulary: treats, has_symptom, causes, complication, exam, contraindicates. Do not add translations, explanations, or extra keywords to this field.
+  - Orient medical relationships from the clinically meaningful subject to the object: Disease -> Drug for treats; Disease -> Symptom for has_symptom; cause -> Disease for causes; Disease -> Disease for complication; Disease -> Exam for exam; Drug -> Disease for contraindicates. Keep other clearly stated relations in their stated direction.
   - If a single statement describes a relationship involving more than two entities, decompose it into multiple binary relationships.
   - For each binary relationship, extract:
     - `source_entity`: The name of the source entity. Ensure **consistent naming** with entity extraction. Capitalize the first letter of each significant word (title case) if the name is case-insensitive.
@@ -97,7 +104,7 @@ You are a Knowledge Graph Specialist responsible for extracting entities and rel
   - Output fewer rows if fewer high-value items are present. Do not try to fill the limit.
   - Only output relationship rows whose source and target entities are both included in the selected entity rows for this response.
   - If the limit is reached, stop adding new rows immediately and output `{completion_delimiter}`.
-  - Treat all relationships as **undirected** unless explicitly stated otherwise. Swapping the source and target entities for an undirected relationship does not constitute a new relationship.
+  - Treat relationships as directed. Do not reverse source and target to create another relationship.
   - Avoid outputting duplicate relationships.
   - Within the list of relationships, output the relationships that are **most significant** to the core meaning of the input text first.
 
@@ -176,6 +183,15 @@ PROMPTS["entity_extraction_json_system_prompt"] = """---Role---
 You are a Knowledge Graph Specialist responsible for extracting entities and relationships from the `---Input Text---` section of user prompt.
 
 ---Instructions---
+0. **CRITICAL RULES — MUST OBEY (anti-hallucination):**
+   - For treats (treatment) relationships, prefer drugs mentioned in the 【医生建议】(doctor's advice) section rather than the 【患者自述】(patient's own words) section.
+   - Extract ONLY entities and relationships that are EXPLICITLY written in the `---Input Text---`.
+   - BOTH endpoints of a relationship MUST appear verbatim in the input text. If either entity name does not literally appear in the text, DO NOT output that relationship.
+   - DO NOT use medical common sense, prior knowledge, or reasonable inference to invent facts not written in the text.
+   - If a drug name does not appear in the text, DO NOT output any Drug entity for it.
+   - NEVER output relationship type names (treats, has_symptom, causes, complication, exam, contraindicates) as entity names.
+   - Entity names MUST be written in the same language as the input text (Chinese). Do NOT translate Chinese entities into English. Do NOT apply English title case to Chinese text.
+
 1. **Entity Extraction:**
   - **Identification:** Identify clearly defined and meaningful entities only in the current user prompt's fenced `---Input Text---` section.
   - **Entity Details:** For each identified entity, extract the following information:
@@ -185,6 +201,8 @@ You are a Knowledge Graph Specialist responsible for extracting entities and rel
 
 2. **Relationship Extraction:**
   - **Identification:** Identify direct, clearly stated, and meaningful relationships between previously extracted entities.
+  - Use exactly one relationship keyword from this controlled vocabulary: treats, has_symptom, causes, complication, exam, contraindicates.
+  - Orient medical relationships as follows: Disease -> Drug for treats; Disease -> Symptom for has_symptom; cause -> Disease for causes; Disease -> Disease for complication; Disease -> Exam for exam; Drug -> Disease for contraindicates. Keep other explicit relations in their stated direction.
   - **N-ary Relationship Decomposition:** If a single statement describes a relationship involving more than two entities (an N-ary relationship), decompose it into multiple binary (two-entity) relationship pairs for separate description.
     - Example pattern: for "<person_1>, <person_2>, and <person_3> collaborated on <project_name>", extract binary relationships between each participant and the project, or between participants when that is the most reasonable interpretation.
   - **Relationship Details:** For each binary relationship, extract the following fields:
@@ -194,7 +212,7 @@ You are a Knowledge Graph Specialist responsible for extracting entities and rel
     - `description`: A concise explanation of the nature of the relationship between the source and target entities, providing a clear rationale for their connection.
 
 3. **Relationship Direction & Duplication:**
-  - Treat all relationships as **undirected** unless explicitly stated otherwise. Swapping the source and target entities for an undirected relationship does not constitute a new relationship.
+  - Treat relationships as directed. Do not reverse source and target to create another relationship.
   - Avoid outputting duplicate relationships.
 
 4. **Output Limits & Prioritization:**

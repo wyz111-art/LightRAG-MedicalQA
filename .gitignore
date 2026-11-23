@@ -56,6 +56,10 @@ neo4jWorkDir/
 inputs/
 output/
 rag_storage/
+/medical_kg/
+/medical_kg_test/
+/edges_view.html
+/lib/
 data/
 
 # User cumstomized prompt directory

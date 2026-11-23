@@ -1,0 +1,236 @@
+{
+  "version": "medical-qa-v1.0",
+  "description": "LightRAG 中文医疗问答正式基准集，覆盖意图、实体、路由、图谱关系、文本证据、回答事实和引用。",
+  "created_at": "2026-11-22",
+  "cases": [
+    {
+      "id": "htn-symptoms",
+      "department": "心血管内科",
+      "category": "症状",
+      "question": "高血压常见的症状有哪些？",
+      "expected": {"intent": "query_symptoms", "relation": "has_symptom", "routes": ["graph"], "entities": ["高血压"], "graph_targets_any": ["头晕", "头疼", "乏力"], "min_graph_evidence": 1, "answer_terms_any": ["头晕", "头痛", "头疼", "乏力"]}
+    },
+    {
+      "id": "htn-complications",
+      "department": "心血管内科",
+      "category": "并发症",
+      "question": "高血压会引起哪些并发症？",
+      "expected": {"intent": "query_complications", "relation": "complication", "routes": ["graph"], "entities": ["高血压"], "graph_targets_any": ["脑梗塞", "脑出血", "心脏病"], "min_graph_evidence": 1, "answer_terms_any": ["脑梗塞", "脑出血", "心脏病"]}
+    },
+    {
+      "id": "htn-exams",
+      "department": "心血管内科",
+      "category": "检查",
+      "question": "高血压需要做哪些检查？",
+      "expected": {"intent": "query_exams", "relation": "exam", "routes": ["graph"], "entities": ["高血压"], "graph_targets_any": ["血压测量", "心电图", "心脏超声", "肾脏超声"], "min_graph_evidence": 1, "answer_terms_any": ["血压", "心电图", "超声"]}
+    },
+    {
+      "id": "htn-drugs",
+      "department": "心血管内科",
+      "category": "药物",
+      "question": "高血压相关的治疗药物有哪些？",
+      "expected": {"intent": "query_drugs", "relation": "treats", "routes": ["graph"], "entities": ["高血压"], "graph_targets_any": ["依那普利", "硝苯地平缓释片", "厄贝沙坦", "降压药"], "min_graph_evidence": 1, "answer_terms_any": ["依那普利", "硝苯地平", "厄贝沙坦", "降压药"]}
+    },
+    {
+      "id": "htn-treatment",
+      "department": "心血管内科",
+      "category": "治疗方法",
+      "question": "高血压的治疗方法有哪些？",
+      "expected": {"intent": "treatment_advice", "relation": "treats", "routes": ["text"], "entities": ["高血压"], "graph_targets_any": ["依那普利", "硝苯地平缓释片", "厄贝沙坦", "降压药"], "min_graph_evidence": 1, "min_text_evidence": 1, "answer_terms_any": ["药物", "降压", "硝苯地平", "依那普利"]}
+    },
+    {
+      "id": "htn-precautions",
+      "department": "心血管内科",
+      "category": "注意事项",
+      "question": "高血压患者平时需要注意什么？",
+      "expected": {"intent": "precautions", "relation": null, "routes": ["text"], "entities": ["高血压"], "min_text_evidence": 1, "answer_terms_any": ["饮食", "休息", "血压", "运动", "盐"]}
+    },
+    {
+      "id": "htn-overview",
+      "department": "心血管内科",
+      "category": "疾病介绍",
+      "question": "高血压是什么？",
+      "expected": {"intent": "disease_overview", "relation": null, "routes": ["hybrid"], "entities": ["高血压"], "min_text_evidence": 1, "answer_terms_any": ["血压", "高血压"]}
+    },
+    {
+      "id": "htn-department",
+      "department": "心血管内科",
+      "category": "就诊科室",
+      "question": "高血压应该挂什么科？",
+      "expected": {"intent": "query_department", "relation": null, "routes": ["hybrid"], "entities": ["高血压"], "min_text_evidence": 1, "answer_terms_any": ["科", "心血管", "内科"]}
+    },
+
+    {
+      "id": "diabetes-symptoms",
+      "department": "内分泌科",
+      "category": "症状",
+      "question": "糖尿病有哪些常见症状？",
+      "expected": {"intent": "query_symptoms", "relation": "has_symptom", "routes": ["graph"], "entities": ["糖尿病"], "graph_targets_any": ["口渴", "多尿", "尿频", "口干"], "min_graph_evidence": 1, "answer_terms_any": ["口渴", "多尿", "尿频", "口干"]}
+    },
+    {
+      "id": "diabetes-complications",
+      "department": "内分泌科",
+      "category": "并发症",
+      "question": "糖尿病可能出现哪些并发症？",
+      "expected": {"intent": "query_complications", "relation": "complication", "routes": ["graph"], "entities": ["糖尿病"], "graph_targets_any": ["糖尿病视网膜病变", "阳痿", "妊娠期糖尿病"], "min_graph_evidence": 1, "answer_terms_any": ["视网膜", "阳痿", "妊娠期糖尿病"]}
+    },
+    {
+      "id": "diabetes-exams",
+      "department": "内分泌科",
+      "category": "检查",
+      "question": "检查糖尿病通常需要做什么项目？",
+      "expected": {"intent": "query_exams", "relation": "exam", "routes": ["graph"], "entities": ["糖尿病"], "graph_targets_any": ["血糖", "空腹血糖", "糖耐量试验", "胰岛功能检查"], "min_graph_evidence": 1, "answer_terms_any": ["血糖", "糖耐量", "胰岛"]}
+    },
+    {
+      "id": "diabetes-drugs",
+      "department": "内分泌科",
+      "category": "药物",
+      "question": "糖尿病相关药物有哪些？",
+      "expected": {"intent": "query_drugs", "relation": "treats", "routes": ["graph"], "entities": ["糖尿病"], "graph_targets_any": ["胰岛素", "二甲双胍", "优降糖"], "min_graph_evidence": 1, "answer_terms_any": ["胰岛素", "二甲双胍", "优降糖"]}
+    },
+    {
+      "id": "diabetes-treatment",
+      "department": "内分泌科",
+      "category": "治疗方法",
+      "question": "糖尿病一般怎么治疗？",
+      "expected": {"intent": "treatment_advice", "relation": "treats", "routes": ["text"], "entities": ["糖尿病"], "graph_targets_any": ["胰岛素", "二甲双胍", "优降糖"], "min_graph_evidence": 1, "min_text_evidence": 1, "answer_terms_any": ["胰岛素", "二甲双胍", "血糖", "药物"]}
+    },
+    {
+      "id": "diabetes-precautions",
+      "department": "内分泌科",
+      "category": "注意事项",
+      "question": "糖尿病患者饮食和生活上要注意什么？",
+      "expected": {"intent": "precautions", "relation": null, "routes": ["text"], "entities": ["糖尿病"], "min_text_evidence": 1, "answer_terms_any": ["饮食", "血糖", "运动", "糖"]}
+    },
+
+    {
+      "id": "pneumonia-symptoms",
+      "department": "呼吸内科",
+      "category": "症状",
+      "question": "肺炎有哪些症状？",
+      "expected": {"intent": "query_symptoms", "relation": "has_symptom", "routes": ["graph"], "entities": ["肺炎"], "graph_targets_any": ["咳嗽", "发热", "咳痰", "喘息"], "min_graph_evidence": 1, "answer_terms_any": ["咳嗽", "发热", "咳痰", "喘息"]}
+    },
+    {
+      "id": "pneumonia-exams",
+      "department": "呼吸内科",
+      "category": "检查",
+      "question": "肺炎需要做哪些检查？",
+      "expected": {"intent": "query_exams", "relation": "exam", "routes": ["graph"], "entities": ["肺炎"], "graph_targets_any": ["CT", "胸部X线检查", "血常规", "痰液培养"], "min_graph_evidence": 1, "answer_terms_any": ["CT", "X线", "血常规", "痰"]}
+    },
+    {
+      "id": "pneumonia-drugs",
+      "department": "呼吸内科",
+      "category": "药物",
+      "question": "肺炎相关的治疗药物有哪些？",
+      "expected": {"intent": "query_drugs", "relation": "treats", "routes": ["graph"], "entities": ["肺炎"], "graph_targets_any": ["抗生素", "抗感染药物", "消炎药"], "min_graph_evidence": 1, "answer_terms_any": ["抗生素", "抗感染", "消炎"]}
+    },
+    {
+      "id": "pneumonia-complications",
+      "department": "呼吸内科",
+      "category": "并发症",
+      "question": "肺炎严重时可能出现哪些并发症？",
+      "expected": {"intent": "query_complications", "relation": "complication", "routes": ["graph"], "entities": ["肺炎"], "graph_targets_any": ["呼吸衰竭", "心力衰竭", "肺大泡"], "min_graph_evidence": 1, "answer_terms_any": ["呼吸衰竭", "心力衰竭", "肺大泡"]}
+    },
+    {
+      "id": "pneumonia-precautions",
+      "department": "呼吸内科",
+      "category": "注意事项",
+      "question": "肺炎患者恢复期间需要注意什么？",
+      "expected": {"intent": "precautions", "relation": null, "routes": ["text"], "entities": ["肺炎"], "min_text_evidence": 1, "answer_terms_any": ["休息", "饮食", "复查", "治疗"]}
+    },
+
+    {
+      "id": "gastritis-symptoms",
+      "department": "消化内科",
+      "category": "症状",
+      "question": "胃炎常见症状有哪些？",
+      "expected": {"intent": "query_symptoms", "relation": "has_symptom", "routes": ["graph"], "entities": ["胃炎"], "graph_targets_any": ["胃痛", "胃胀", "口苦", "嗳气"], "min_graph_evidence": 1, "answer_terms_any": ["胃痛", "胃胀", "口苦", "嗳气"]}
+    },
+    {
+      "id": "gastritis-causes",
+      "department": "消化内科",
+      "category": "病因",
+      "question": "胃炎可能由什么原因引起？",
+      "expected": {"intent": "query_causes", "relation": "causes", "routes": ["graph"], "entities": ["胃炎"], "graph_targets_any": ["幽门螺杆菌感染", "生冷的食物"], "min_graph_evidence": 1, "answer_terms_any": ["幽门螺杆菌", "食物"]}
+    },
+    {
+      "id": "gastritis-exams",
+      "department": "消化内科",
+      "category": "检查",
+      "question": "胃炎一般需要做什么检查？",
+      "expected": {"intent": "query_exams", "relation": "exam", "routes": ["graph"], "entities": ["胃炎"], "graph_targets_any": ["胃镜检查", "检查"], "min_graph_evidence": 1, "answer_terms_any": ["胃镜", "检查"]}
+    },
+    {
+      "id": "gastritis-drugs",
+      "department": "消化内科",
+      "category": "药物",
+      "question": "胃炎相关药物有哪些？",
+      "expected": {"intent": "query_drugs", "relation": "treats", "routes": ["graph"], "entities": ["胃炎"], "graph_targets_any": ["奥美拉唑", "奥美拉唑胶囊", "吗丁啉"], "min_graph_evidence": 1, "answer_terms_any": ["奥美拉唑", "吗丁啉"]}
+    },
+    {
+      "id": "gastritis-precautions",
+      "department": "消化内科",
+      "category": "注意事项",
+      "question": "胃炎患者平时饮食要注意什么？",
+      "expected": {"intent": "precautions", "relation": null, "routes": ["text"], "entities": ["胃炎"], "min_text_evidence": 1, "answer_terms_any": ["饮食", "刺激", "食物", "规律"]}
+    },
+
+    {
+      "id": "cold-symptoms",
+      "department": "呼吸内科",
+      "category": "症状",
+      "question": "感冒通常有哪些症状？",
+      "expected": {"intent": "query_symptoms", "relation": "has_symptom", "routes": ["graph"], "entities": ["感冒"], "graph_targets_any": ["咳嗽", "鼻塞", "发热", "头痛", "流鼻涕"], "min_graph_evidence": 1, "answer_terms_any": ["咳嗽", "鼻塞", "发热", "头痛", "流鼻涕"]}
+    },
+    {
+      "id": "cold-complications",
+      "department": "呼吸内科",
+      "category": "并发症",
+      "question": "感冒可能引起哪些并发症？",
+      "expected": {"intent": "query_complications", "relation": "complication", "routes": ["graph"], "entities": ["感冒"], "graph_targets_any": ["咽炎", "扁桃体炎", "上呼吸道感染"], "min_graph_evidence": 1, "answer_terms_any": ["咽炎", "扁桃体炎", "呼吸道感染"]}
+    },
+    {
+      "id": "cold-treatment",
+      "department": "呼吸内科",
+      "category": "治疗方法",
+      "question": "普通感冒一般如何治疗？",
+      "expected": {"intent": "treatment_advice", "relation": "treats", "routes": ["text"], "entities": ["普通感冒"], "graph_targets_any": ["感冒药", "中药", "退烧药"], "min_graph_evidence": 1, "min_text_evidence": 1, "answer_terms_any": ["感冒药", "休息", "治疗", "退烧"]}
+    },
+    {
+      "id": "cold-precautions",
+      "department": "呼吸内科",
+      "category": "注意事项",
+      "question": "感冒期间生活上要注意什么？",
+      "expected": {"intent": "precautions", "relation": null, "routes": ["text"], "entities": ["感冒"], "min_text_evidence": 1, "answer_terms_any": ["休息", "饮水", "饮食", "通风"]}
+    },
+
+    {
+      "id": "chd-symptoms",
+      "department": "心血管内科",
+      "category": "症状",
+      "question": "冠心病会有哪些症状？",
+      "expected": {"intent": "query_symptoms", "relation": "has_symptom", "routes": ["graph"], "entities": ["冠心病"], "graph_targets_any": ["呼吸困难", "心慌气短", "心脏不舒服"], "min_graph_evidence": 1, "answer_terms_any": ["呼吸困难", "心慌", "气短", "心脏"]}
+    },
+    {
+      "id": "chd-exams",
+      "department": "心血管内科",
+      "category": "检查",
+      "question": "冠心病需要做哪些检查？",
+      "expected": {"intent": "query_exams", "relation": "exam", "routes": ["graph"], "entities": ["冠心病"], "graph_targets_any": ["冠脉造影检查", "血常规"], "min_graph_evidence": 1, "answer_terms_any": ["冠脉造影", "血常规", "检查"]}
+    },
+    {
+      "id": "chd-drugs",
+      "department": "心血管内科",
+      "category": "药物",
+      "question": "冠心病相关药物有哪些？",
+      "expected": {"intent": "query_drugs", "relation": "treats", "routes": ["graph"], "entities": ["冠心病"], "graph_targets_any": ["他汀类药物", "辛伐他汀", "阿司匹林", "波立维"], "min_graph_evidence": 1, "answer_terms_any": ["他汀", "阿司匹林", "波立维"]}
+    },
+    {
+      "id": "chd-overview",
+      "department": "心血管内科",
+      "category": "疾病介绍",
+      "question": "冠心病是什么病？",
+      "expected": {"intent": "disease_overview", "relation": null, "routes": ["hybrid"], "entities": ["冠心病"], "min_text_evidence": 1, "answer_terms_any": ["冠心病", "心脏", "冠状动脉"]}
+    }
+  ]
+}
